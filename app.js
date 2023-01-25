@@ -7,13 +7,27 @@ console.log('Close the curtain!! You shouldn\'t be in here!!');
 const secretNumber = Math.floor(Math.random()*(100-1)+1);
 console.log(`Secret Number: ${secretNumber}`);
 let count = 0;
+let attempts = [];
+const name = getUserName();
+
+function getUserName() {
+    let userName = prompt('Welcome! Can I get your name?');
+    return userName;
+}
 
 // starts the Guessing Game, should be only the first time around
 function startTheGame() {
-    alert("Congratulations! You are now playing the \"Guessing Game\"! In this game, you will be asked to guess a number between 1 and 100. In the prompt, type your answer (only numbers!) and we\'ll let you know if you guess it correctly. Good luck!");
+    alert(`Congratulations, ${name}! You are now playing the \"Guessing Game\"! In this game, you will be asked to guess a number between 1 and 100. In the prompt, type your answer (only numbers!) and we\'ll let you know if you guess it correctly. Good luck!`);
     let numInp = prompt('Go ahead and give us your best guess!');
     let num = parseInt(numInp);
-    startGuessing(num);
+    attempts.push(num);
+    count +=1;
+    console.log(count);
+    if (num === secretNumber) {
+        alert(`Holy cow, ${name}! You got it on the first try! You\'re awesome!`);
+    } else {
+        startGuessing(num);
+    }
 }
 
 // Main loop function to handle inputs
@@ -21,7 +35,7 @@ function startGuessing(number) {
     let validInput = false;
     while (!validInput) {
         const result = mainGuess();
-        if (result === 'Correct! You got it!') {
+        if (result === `Correct, ${name}! You got it! It only took ${count} tries. Your guesses were: ${attempts.join(", ")}.`) {
             validInput = true;
         }
         alert(result);
@@ -32,16 +46,19 @@ function startGuessing(number) {
 function mainGuess() {
     let numImp = prompt('Let\'s give it another try:');
     const num = parseInt(numImp);
+    attempts.push(num)
+    count +=1;
+    console.log(count);
     if (Number.isInteger(num)) {
         if (num < secretNumber) {
-            return 'You\'ll need to go higher next time.';
+            return `Sorry ${name}, you\'ll need to go higher next time.`;
         } else if (num > secretNumber) {
-            return 'You\'ll need to go lower next time.';
+            return `Sorry ${name}, you\'ll need to go lower next time.`;
         } else if (num === secretNumber) {
-            return 'Correct! You got it!';
+            return `Correct, ${name}! You got it! It only took ${count} tries. Your guesses were: ${attempts.join(", ")}.`;
         }
     } else {
-        return 'Oh, come on now. We told you only numbers, get it right next time!';
+        return `Come on now, ${name}. We told you only numbers, get it right next time!`;
     }
 }
 
