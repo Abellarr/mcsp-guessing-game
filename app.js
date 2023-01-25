@@ -8,16 +8,16 @@
    E= see in coding for edge cases*/
 
 // Sets the secret number that needs to be guessed later on.
-console.log('Close the curtain!! You shouldn\'t be in here!!');
-let secretNumber = getRandomNumber(1,100);
-let name = getUserName();  // stores user's name
-let attempts = []; // stores number of guesses per game
-let nameObj = {}; // stores user's name and number of attempts of last game they played
+console.log('Close the curtain!! You shouldn\'t be in here!!');  // when in dev tools, lets me know it initalized properly
+let secretNumber = getRandomNumber(1,100);                   // generates a random number between 1-100
+let name = getUserName();                                    // stores user's name
+let attempts = [];                                           // stores number of guesses per game
+let nameObj = {};                                            // stores user's name and number of attempts of last game they played
 
 // function to generate the random secret number and store in the 'secretNumber' variable above.
 function getRandomNumber(min,max) {
     let randomNum = Math.floor(Math.random()*(max-min)+min);
-    console.log(`Secret Number: ${randomNum}`);
+    console.log(`Secret Number: ${randomNum}`);              // mainly for troubleshooting and tracking 
     return randomNum;
 }
 
@@ -27,28 +27,30 @@ function getUserName() {
     return userName;
 }
 
-// Starts the Guessing Game, starts only the first time around and kicks it over to the main logic function.
+// Starts the Guessing Game, runs only for the first guess, then invokes the main logic function.
 function startTheGame() {
     alert(`Congratulations, ${name}! You are now playing the \"Guessing Game\"! In this game, you will be asked to guess a number between 1 and 100. In the prompt, type your answer (only numbers!) and we\'ll let you know if you guess it correctly. Good luck!`);
-    let numInp = prompt('Go ahead and give us your best guess!');
-    let num = parseInt(numInp);
-    attempts.push(num);
-    console.log(attempts.length, num);
-    if (num === secretNumber) {
+    let numInp = prompt('Go ahead and give us your best guess!');  // gets first number input from user
+    let num = parseInt(numInp);                              // parses from string to number value
+    attempts.push(num);                                      //pushes the number to the attempts array
+    console.log(attempts.length, num);                       // mainly for troubleshooting and tracking
+    if (num === secretNumber) {                              // conditional for if user correctly guesses on first try
         alert(`Holy cow, ${name}! You got it on the first try! You\'re awesome!`);
-        if (nameObj.hasOwnProperty(name)) {
+        if (nameObj.hasOwnProperty(name)) {                  // compares this game with previous games for difference of attempts
             alert(`Awesome, you got it in ${nameObj[name] - attempts.length} less guesses than last time.`)
         }
-        nameObj[name] = attempts.length;
+        nameObj[name] = attempts.length;                     // pushes the number of attempts to the name object for storage
         let restart = prompt('Would you like to play again, yes or no?')
-        if (restart == 'yes' || restart == 'Yes' || restart == 'YES') { // only accepts these three forms of 'yes'.
-            secretNumber = getRandomNumber(1,100);
+        if (restart.toLowerCase() === 'yes') {               // if answer is yes, then restarts the game.
+            secretNumber = getRandomNumber(1,100);           // These lines reset the secretNumber, userName and clear the attempts array
             name = getUserName();
             attempts = [];
-            startTheGame();
+            startTheGame();                                  //restarts the game
+        } else {                                             // gives a good-bye prompt if answer is no
+            alert('Ok, good bye!');
         }
     } else {
-        startGuessing(num);
+        startGuessing(num);                                  // if not correct on first try, invokes the main logic function
     }
 }
 
@@ -61,36 +63,37 @@ function startGuessing(number) {
             validInput = true;
         }
         alert(result[0]);
-        if (validInput == true) {
-            if (nameObj.hasOwnProperty(name)) { // checks to see if the user has played before
-                if (nameObj[name] > attempts.length) {
+        if (validInput == true) {                            // this conditional checks if they guessed it correctly and compares against previous games
+            if (nameObj.hasOwnProperty(name)) {              // checks to see if the user has played before
+                if (nameObj[name] > attempts.length) {       // this conditional compares previous attempts with current attempts
                     alert(`Awesome, you needed ${nameObj[name]-attempts.length} less guesses than last time.`)
                 } else if (nameObj[name] < attempts.length) {
                     alert(`You got it in ${attempts.length-nameObj[name]} more guesses than last time.`)
                 }
             }
-            nameObj[name] = attempts.length;
-            let restart = prompt('Would you like to play again, yes or no?');
-            if (restart == 'yes' || restart == 'Yes' || restart == 'YES') {
-                secretNumber = getRandomNumber(1,100);
+            nameObj[name] = attempts.length;                 // pushes the number of attempts to the name object for storage
+            let restart = prompt('Would you like to play again, yes or no?'); // checks to see if they want to play again
+            if (restart.toLowerCase() === 'yes') {           // if answer is yes, then restarts the game.
+                secretNumber = getRandomNumber(1,100);       // These lines reset the secretNumber, userName and clear the attempts array
                 name = getUserName();
                 attempts = [];
-                startTheGame();
+                startTheGame();                              // restarts the game
+            } else {                                         // gives a good-bye prompt if answer is no
+                alert('Ok, good bye!');
             }
         
         }
     }
 }
 
-// Parses the input to see what happens next.
+// Parses the input to see what happens next. Invoked by the main logic function
 function mainGuess() {
     let numImp = prompt('Let\'s give it another try:');
     const num = parseInt(numImp);
-    attempts.push(num);
-    console.log(attempts.length, num);
-    // console.log(count);
-    if (Number.isInteger(num)) {
-        if (num < secretNumber) {
+    attempts.push(num);                                      // pushes the number to the attempts array
+    console.log(attempts.length, num);                       // mainly for troubleshooting and tracking 
+    if (Number.isInteger(num)) {                             // checks if the number input is valid
+        if (num < secretNumber) {                            // if valid, compares it to the secretNumber
             return [`Sorry ${name}, you\'ll need to go higher next time.`, num];
         } else if (num > secretNumber) {
             return [`Sorry ${name}, you\'ll need to go lower next time.`, num];
@@ -98,7 +101,7 @@ function mainGuess() {
             return [`Correct, ${name}! You got it! It only took ${attempts.length} tries. Your guesses were: ${attempts.join(", ")}.`, num];
         }
     } else {
-        return [`Come on now, ${name}. We told you only numbers, get it right next time!`, 1]; //edge case if they try to give a non-number input
+        return [`Come on now, ${name}. We told you only numbers, get it right next time!`, 0];   //edge case if they try to give a non-number input
     }
 }
 
@@ -126,14 +129,14 @@ on the page when I first wrote it but I adopted the while loop form that Phil wa
 //         higherGuess(number);
 //     }
 // }
-// // Function for if the number is lower than the secret number, loops back into startGuessing and adds 1 to the count variable.
+// // Function for if the number is lower than the secret number, invokes startGuessing and adds 1 to the count variable.
 // function lowerGuess(number) {
 //     alert('You\'ll need to go higher next time.');
 //     let numInput = prompt('Let\'s give another guess:');
 //     let num = parseInt(numInput);
 //     startGuessing(num);
 // }
-// // Function for if the number is higher than the secret number, loops back into startGuessing and adds 1 to the count variable.
+// // Function for if the number is higher than the secret number, invokes startGuessing and adds 1 to the count variable.
 // function higherGuess(number) {
 //     alert('You\'ll need to go lower next time.');
 //     let numInput = prompt('Let\'s give another guess:');
